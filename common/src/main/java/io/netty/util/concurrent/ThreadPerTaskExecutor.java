@@ -28,6 +28,7 @@ public final class ThreadPerTaskExecutor implements Executor {
         this.threadFactory = threadFactory;
     }
 
+    // 执行Runnable的时候顺便启动线程
     @Override
     public void execute(Runnable command) {
         threadFactory.newThread(command).start();

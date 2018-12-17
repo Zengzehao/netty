@@ -25,7 +25,10 @@ import java.util.concurrent.TimeUnit;
  * The {@link EventExecutorGroup} is responsible for providing the {@link EventExecutor}'s to use
  * via its {@link #next()} method. Besides this, it is also responsible for handling their
  * life-cycle and allows shutting them down in a global fashion.
- *
+ * 事件执行器组，有几个重要的点
+ * 1. next()方法可以从这个组中拿到一个Executor
+ * 2. 可以处理这个事件执行器组的生命周期
+ * 3. 这点注释没有说到，EventExecutorGroup 整合了可调度任务执行器的功能
  */
 public interface EventExecutorGroup extends ScheduledExecutorService, Iterable<EventExecutor> {
 
