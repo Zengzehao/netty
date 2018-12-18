@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract base class for {@link EventExecutor} implementations.
+ * 不支持任务调度呀
  */
 public abstract class AbstractEventExecutor extends AbstractExecutorService implements EventExecutor {
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractEventExecutor.class);
@@ -36,6 +37,7 @@ public abstract class AbstractEventExecutor extends AbstractExecutorService impl
     static final long DEFAULT_SHUTDOWN_QUIET_PERIOD = 2;
     static final long DEFAULT_SHUTDOWN_TIMEOUT = 15;
 
+    // parent说明这个EventExecutor是属于哪个EventExecutorGroup
     private final EventExecutorGroup parent;
     private final Collection<EventExecutor> selfCollection = Collections.<EventExecutor>singleton(this);
 
@@ -52,16 +54,28 @@ public abstract class AbstractEventExecutor extends AbstractExecutorService impl
         return parent;
     }
 
+    /**
+     * 返回它本身
+     * @return
+     */
     @Override
     public EventExecutor next() {
         return this;
     }
 
+    /**
+     * 是否在同一个EventExecutorGroup
+     * @return
+     */
     @Override
     public boolean inEventLoop() {
         return inEventLoop(Thread.currentThread());
     }
 
+    /**
+     * 迭代，返回自身
+     * @return
+     */
     @Override
     public Iterator<EventExecutor> iterator() {
         return selfCollection.iterator();

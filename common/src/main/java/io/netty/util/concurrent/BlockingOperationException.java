@@ -20,6 +20,7 @@ package io.netty.util.concurrent;
  * when the user is in an event loop thread.  If a blocking operation is performed in an event loop
  * thread, the blocking operation will most likely enter a dead lock state, hence throwing this
  * exception.
+ * 阻塞操作异常
  */
 public class BlockingOperationException extends IllegalStateException {
 

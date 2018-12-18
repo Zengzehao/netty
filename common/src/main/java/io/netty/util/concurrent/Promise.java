@@ -25,6 +25,7 @@ public interface Promise<V> extends Future<V> {
      * listeners.
      *
      * If it is success or failed already it will throw an {@link IllegalStateException}.
+     * 标记Future异步操作为成功，并通所有的监听器
      */
     Promise<V> setSuccess(V result);
 
@@ -35,6 +36,8 @@ public interface Promise<V> extends Future<V> {
      * @return {@code true} if and only if successfully marked this future as
      *         a success. Otherwise {@code false} because this future is
      *         already marked as either a success or a failure.
+     *         尝试标记Future异步操作为成功，并通所有的监听器
+     *         如果标记成功则返回true，否则返回false
      */
     boolean trySuccess(V result);
 
@@ -43,6 +46,7 @@ public interface Promise<V> extends Future<V> {
      * listeners.
      *
      * If it is success or failed already it will throw an {@link IllegalStateException}.
+     * 标记Future异步操作为失败，并通所有的监听器
      */
     Promise<V> setFailure(Throwable cause);
 
@@ -53,6 +57,8 @@ public interface Promise<V> extends Future<V> {
      * @return {@code true} if and only if successfully marked this future as
      *         a failure. Otherwise {@code false} because this future is
      *         already marked as either a success or a failure.
+     *         尝试标记Future异步操作为失败，并通所有的监听器
+     *         如果标记成功则返回true，否则返回false
      */
     boolean tryFailure(Throwable cause);
 
@@ -61,9 +67,15 @@ public interface Promise<V> extends Future<V> {
      *
      * @return {@code true} if and only if successfully marked this future as uncancellable or it is already done
      *         without being cancelled.  {@code false} if this future has been cancelled already.
+     *         设置该操作是不可以取消的
      */
     boolean setUncancellable();
 
+    /**
+     * 下面的方法覆盖父类的方法，返回Promise
+     * @param listener
+     * @return
+     */
     @Override
     Promise<V> addListener(GenericFutureListener<? extends Future<? super V>> listener);
 

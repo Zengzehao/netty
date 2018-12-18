@@ -24,5 +24,6 @@ package io.netty.util.concurrent;
  *     public void operationComplete(Future f) { .. }
  * });
  * </pre>
+ * GenericFutureListener 的子类型
  */
 public interface FutureListener<V> extends GenericFutureListener<Future<V>> { }
