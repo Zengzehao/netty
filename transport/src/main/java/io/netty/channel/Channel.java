@@ -74,15 +74,21 @@ import java.net.SocketAddress;
  * resources once you are done with the {@link Channel}. This ensures all resources are
  * released in a proper way, i.e. filehandles.
  */
+
+/**
+ * Channel, 网络套接字 或者是一种能够进行I/O操作，如读、写、连接和绑定的组件。
+ */
 public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparable<Channel> {
 
     /**
      * Returns the globally unique identifier of this {@link Channel}.
+     * Channel唯一的id
      */
     ChannelId id();
 
     /**
      * Return the {@link EventLoop} this {@link Channel} was registered to.
+     * Channel是被哪个EventLoop注册的
      */
     EventLoop eventLoop();
 
@@ -96,11 +102,13 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
 
     /**
      * Returns the configuration of this channel.
+     * 配置
      */
     ChannelConfig config();
 
     /**
      * Returns {@code true} if the {@link Channel} is open and may get active later
+     *
      */
     boolean isOpen();
 
@@ -116,6 +124,7 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
 
     /**
      * Return the {@link ChannelMetadata} of the {@link Channel} which describe the nature of the {@link Channel}.
+     * 元数据
      */
     ChannelMetadata metadata();
 
@@ -127,6 +136,7 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
      *
      * @return the local address of this channel.
      *         {@code null} if this channel is not bound.
+     * 返回与该Channel绑定的本地地址
      */
     SocketAddress localAddress();
 
@@ -143,12 +153,14 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
      *         use {@link DatagramPacket#recipient()} to determine
      *         the origination of the received message as this method will
      *         return {@code null}.
+     * 返回与该Channel联系的远程地址
      */
     SocketAddress remoteAddress();
 
     /**
      * Returns the {@link ChannelFuture} which will be notified when this
      * channel is closed.  This method always returns the same future instance.
+     * 关闭Channel
      */
     ChannelFuture closeFuture();
 
@@ -157,6 +169,7 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
      * requested write operation immediately.  Any write requests made when
      * this method returns {@code false} are queued until the I/O thread is
      * ready to process the queued write requests.
+     * 是否可以写
      */
     boolean isWritable();
 

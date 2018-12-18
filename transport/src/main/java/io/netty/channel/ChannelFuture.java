@@ -162,6 +162,10 @@ import java.util.concurrent.TimeUnit;
  * }
  * </pre>
  */
+
+/**
+ * 异步Channel IO操作的结果
+ */
 public interface ChannelFuture extends Future<Void> {
 
     /**

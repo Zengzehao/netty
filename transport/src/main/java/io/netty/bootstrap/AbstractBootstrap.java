@@ -46,21 +46,32 @@ import java.util.Map;
  *
  * <p>When not used in a {@link ServerBootstrap} context, the {@link #bind()} methods are useful for connectionless
  * transports such as datagram (UDP).</p>
+ * 帮助类
+ *
  */
 public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C extends Channel> implements Cloneable {
 
+    // 事件执行器组
     volatile EventLoopGroup group;
+
+    //
     @SuppressWarnings("deprecation")
     private volatile ChannelFactory<? extends C> channelFactory;
     private volatile SocketAddress localAddress;
+    // ChannelOption
     private final Map<ChannelOption<?>, Object> options = new LinkedHashMap<ChannelOption<?>, Object>();
     private final Map<AttributeKey<?>, Object> attrs = new LinkedHashMap<AttributeKey<?>, Object>();
+    // Channel处理器
     private volatile ChannelHandler handler;
 
     AbstractBootstrap() {
         // Disallow extending from a different package.
     }
 
+    /**
+     * 构造函数，把自己传进来，哈哈
+     * @param bootstrap
+     */
     AbstractBootstrap(AbstractBootstrap<B, C> bootstrap) {
         group = bootstrap.group;
         channelFactory = bootstrap.channelFactory;
@@ -77,6 +88,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * The {@link EventLoopGroup} which is used to handle all the events for the to-be-created
      * {@link Channel}
+     * 链式，添加EventLoopGroup
      */
     public B group(EventLoopGroup group) {
         if (group == null) {
@@ -117,7 +129,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         if (this.channelFactory != null) {
             throw new IllegalStateException("channelFactory set already");
         }
-
+        //赋值，ChannelFactory
         this.channelFactory = channelFactory;
         return self();
     }
@@ -166,6 +178,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * Allow to specify a {@link ChannelOption} which is used for the {@link Channel} instances once they got
      * created. Use a value of {@code null} to remove a previous set {@link ChannelOption}.
+     * ChannelOption
      */
     public <T> B option(ChannelOption<T> option, T value) {
         if (option == null) {
@@ -186,6 +199,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * Allow to specify an initial attribute of the newly created {@link Channel}.  If the {@code value} is
      * {@code null}, the attribute of the specified {@code key} is removed.
+     * 属性
      */
     public <T> B attr(AttributeKey<T> key, T value) {
         if (key == null) {
@@ -206,6 +220,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * Validate all the parameters. Sub-classes may override this, but should
      * call the super method in that case.
+     * 验证
      */
     public B validate() {
         if (group == null) {
@@ -228,14 +243,17 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
     /**
      * Create a new {@link Channel} and register it with an {@link EventLoop}.
+     * 注册
      */
     public ChannelFuture register() {
+        // 检验
         validate();
         return initAndRegister();
     }
 
     /**
      * Create a new {@link Channel} and bind it.
+     * 绑定
      */
     public ChannelFuture bind() {
         validate();
@@ -243,6 +261,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         if (localAddress == null) {
             throw new IllegalStateException("localAddress not set");
         }
+        // 绑定操作
         return doBind(localAddress);
     }
 
@@ -279,12 +298,15 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     }
 
     private ChannelFuture doBind(final SocketAddress localAddress) {
+        // 初始化并且注册
         final ChannelFuture regFuture = initAndRegister();
+        // 拿到Channel
         final Channel channel = regFuture.channel();
+        // cause()不为空,表示出错l
         if (regFuture.cause() != null) {
             return regFuture;
         }
-
+        // 已经成功
         if (regFuture.isDone()) {
             // At this point we know that the registration was complete and successful.
             ChannelPromise promise = channel.newPromise();
@@ -317,6 +339,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
+            // 实例化Channel对象
             channel = channelFactory.newChannel();
             init(channel);
         } catch (Throwable t) {
@@ -330,6 +353,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
+        // 注册Channel
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {
@@ -359,10 +383,14 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
         // This method is invoked before channelRegistered() is triggered.  Give user handlers a chance to set up
         // the pipeline in its channelRegistered() implementation.
+        //
         channel.eventLoop().execute(new Runnable() {
             @Override
             public void run() {
+                //
                 if (regFuture.isSuccess()) {
+                    // 绑定
+                    // 添加监听
                     channel.bind(localAddress, promise).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
                 } else {
                     promise.setFailure(regFuture.cause());
@@ -438,6 +466,12 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         return copiedMap(attrs);
     }
 
+    /**
+     * 设置Channel选项
+     * @param channel
+     * @param options
+     * @param logger
+     */
     static void setChannelOptions(
             Channel channel, Map<ChannelOption<?>, Object> options, InternalLogger logger) {
         for (Map.Entry<ChannelOption<?>, Object> e: options.entrySet()) {
