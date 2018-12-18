@@ -89,6 +89,11 @@ public interface EventExecutorGroup extends ScheduledExecutorService, Iterable<E
     @Override
     Iterator<EventExecutor> iterator();
 
+    /**
+     * submit最终也会去执行execute()
+     * @param task
+     * @return
+     */
     @Override
     Future<?> submit(Runnable task);
 

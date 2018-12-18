@@ -24,15 +24,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A {@link ThreadFactory} implementation with a simple naming rule.
+ * 默认的线程工厂
  */
 public class DefaultThreadFactory implements ThreadFactory {
 
+    // poolId自增
     private static final AtomicInteger poolId = new AtomicInteger();
-
+    // nextId自增
     private final AtomicInteger nextId = new AtomicInteger();
+    // 名字前缀
     private final String prefix;
+    // 守护线程标志
     private final boolean daemon;
+    // 优先级
     private final int priority;
+    // 线程组
     protected final ThreadGroup threadGroup;
 
     public DefaultThreadFactory(Class<?> poolType) {
@@ -105,12 +111,14 @@ public class DefaultThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
+        // 创建线程
         Thread t = newThread(FastThreadLocalRunnable.wrap(r), prefix + nextId.incrementAndGet());
         try {
+            // 设置为守护线程
             if (t.isDaemon() != daemon) {
                 t.setDaemon(daemon);
             }
-
+            // 设置优先级
             if (t.getPriority() != priority) {
                 t.setPriority(priority);
             }

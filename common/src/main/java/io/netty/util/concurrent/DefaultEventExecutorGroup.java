@@ -54,8 +54,16 @@ public class DefaultEventExecutorGroup extends MultithreadEventExecutorGroup {
         super(nThreads, threadFactory, maxPendingTasks, rejectedHandler);
     }
 
+    /**
+     *
+     * @param executor
+     * @param args
+     * @return
+     * @throws Exception
+     */
     @Override
     protected EventExecutor newChild(Executor executor, Object... args) throws Exception {
+        // 创建默认的EventExecutor
         return new DefaultEventExecutor(this, executor, (Integer) args[0], (RejectedExecutionHandler) args[1]);
     }
 }

@@ -17,6 +17,9 @@ package io.netty.util.concurrent;
 
 import io.netty.util.internal.ObjectUtil;
 
+/**
+ * 快速线程本地可执行的方法体
+ */
 final class FastThreadLocalRunnable implements Runnable {
     private final Runnable runnable;
 
