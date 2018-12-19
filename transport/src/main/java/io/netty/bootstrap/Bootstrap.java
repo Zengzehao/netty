@@ -52,11 +52,13 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
 
     private static final AddressResolverGroup<?> DEFAULT_RESOLVER = DefaultAddressResolverGroup.INSTANCE;
 
+    // 配置
     private final BootstrapConfig config = new BootstrapConfig(this);
 
     @SuppressWarnings("unchecked")
     private volatile AddressResolverGroup<SocketAddress> resolver =
             (AddressResolverGroup<SocketAddress>) DEFAULT_RESOLVER;
+    // 远程地址
     private volatile SocketAddress remoteAddress;
 
     public Bootstrap() { }
@@ -108,6 +110,7 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
 
     /**
      * Connect a {@link Channel} to the remote peer.
+     * 连接
      */
     public ChannelFuture connect() {
         validate();
@@ -160,6 +163,7 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
      * @see #connect()
      */
     private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
+        // 初始化并且注册
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
 
@@ -196,6 +200,7 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
     private ChannelFuture doResolveAndConnect0(final Channel channel, SocketAddress remoteAddress,
                                                final SocketAddress localAddress, final ChannelPromise promise) {
         try {
+            // EventLoop
             final EventLoop eventLoop = channel.eventLoop();
             final AddressResolver<SocketAddress> resolver = this.resolver.getResolver(eventLoop);
 
@@ -239,6 +244,12 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
         return promise;
     }
 
+    /**
+     * 连接
+     * @param remoteAddress
+     * @param localAddress
+     * @param connectPromise
+     */
     private static void doConnect(
             final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise connectPromise) {
 
@@ -258,6 +269,11 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
         });
     }
 
+    /**
+     * 初始化工作
+     * @param channel
+     * @throws Exception
+     */
     @Override
     @SuppressWarnings("unchecked")
     void init(Channel channel) throws Exception {
