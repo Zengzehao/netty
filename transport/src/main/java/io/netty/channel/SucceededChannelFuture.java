@@ -21,6 +21,8 @@ import io.netty.util.concurrent.EventExecutor;
  * The {@link CompleteChannelFuture} which is succeeded already.  It is
  * recommended to use {@link Channel#newSucceededFuture()} instead of
  * calling the constructor of this future.
+ *
+ *
  */
 final class SucceededChannelFuture extends CompleteChannelFuture {
 

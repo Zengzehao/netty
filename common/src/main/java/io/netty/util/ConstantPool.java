@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A pool of {@link Constant}s.
+ * 常量池
  *
  * @param <T> the type of the constant
  */
@@ -62,6 +63,7 @@ public abstract class ConstantPool<T extends Constant<T>> {
 
     /**
      * Get existing constant by name or creates new one if not exists. Threadsafe
+     * 通过获取已经存在的常量 或者 不存在时创建一个新的。 线程安全
      *
      * @param name the name of the {@link Constant}
      */

@@ -136,6 +136,10 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         return this;
     }
 
+    /**
+     * 通道被注册之后调用
+     * @param next
+     */
     static void invokeChannelRegistered(final AbstractChannelHandlerContext next) {
         EventExecutor executor = next.executor();
         if (executor.inEventLoop()) {
@@ -150,6 +154,9 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         }
     }
 
+    /**
+     * 通道注册后调用
+     */
     private void invokeChannelRegistered() {
         if (invokeHandler()) {
             try {

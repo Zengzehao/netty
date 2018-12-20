@@ -18,6 +18,7 @@ package io.netty.channel;
 import java.net.SocketAddress;
 
 /**
+ * 下行事件处理器
  * {@link ChannelHandler} which will get notified for IO-outbound-operations.
  */
 public interface ChannelOutboundHandler extends ChannelHandler {

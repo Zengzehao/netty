@@ -128,11 +128,16 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
 
     /**
      * Returns a new {@link DefaultChannelPipeline} instance.
+     * 创建一个默认的通道管道
      */
     protected DefaultChannelPipeline newChannelPipeline() {
         return new DefaultChannelPipeline(this);
     }
 
+    /**
+     * 是否是可写的
+     * @return
+     */
     @Override
     public boolean isWritable() {
         ChannelOutboundBuffer buf = unsafe.outboundBuffer();
@@ -545,6 +550,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     // 如果是第一次注册
                     if (firstRegistration) {
                         // 回调
+                        // 活跃状态
                         pipeline.fireChannelActive();
                     } else if (config().isAutoRead()) {
                         // This channel was registered before and autoRead() is set. This means we need to begin read
@@ -634,6 +640,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // 通道断开连接
                         pipeline.fireChannelInactive();
                     }
                 });
@@ -888,6 +895,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // 捕获异常
                         pipeline.fireExceptionCaught(e);
                     }
                 });

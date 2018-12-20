@@ -128,14 +128,18 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
             }
         }
 
+        //读取
         @Override
         public final void read() {
+
             final ChannelConfig config = config();
             if (shouldBreakReadReady(config)) {
                 clearReadPending();
                 return;
             }
+            // 管道
             final ChannelPipeline pipeline = pipeline();
+            // ByteBuf分配器
             final ByteBufAllocator allocator = config.getAllocator();
             final RecvByteBufAllocator.Handle allocHandle = recvBufAllocHandle();
             allocHandle.reset(config);
@@ -160,11 +164,13 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
 
                     allocHandle.incMessagesRead(1);
                     readPending = false;
+                    // 通知fireChannelRead
                     pipeline.fireChannelRead(byteBuf);
                     byteBuf = null;
                 } while (allocHandle.continueReading());
 
                 allocHandle.readComplete();
+                // 通知读取完成
                 pipeline.fireChannelReadComplete();
 
                 if (close) {

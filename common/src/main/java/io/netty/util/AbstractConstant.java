@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class AbstractConstant<T extends AbstractConstant<T>> implements Constant<T> {
 
+    // 唯一的id自增生成器
     private static final AtomicLong uniqueIdGenerator = new AtomicLong();
     private final int id;
     private final String name;
@@ -61,6 +62,11 @@ public abstract class AbstractConstant<T extends AbstractConstant<T>> implements
         return super.equals(obj);
     }
 
+    /**
+     * 排序
+     * @param o
+     * @return
+     */
     @Override
     public final int compareTo(T o) {
         if (this == o) {

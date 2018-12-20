@@ -27,8 +27,11 @@ import java.net.NetworkInterface;
  * way. Which {@link ChannelOption} is supported depends on the actual implementation
  * of {@link ChannelConfig} and may depend on the nature of the transport it belongs
  * to.
+ * 通道选项
+ *
  *
  * @param <T>   the type of the value which is valid for the {@link ChannelOption}
+ *
  */
 public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
 
@@ -71,10 +74,12 @@ public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
         return (ChannelOption<T>) pool.newInstance(name);
     }
 
+    // ALLOCATOR 常量
     public static final ChannelOption<ByteBufAllocator> ALLOCATOR = valueOf("ALLOCATOR");
     public static final ChannelOption<RecvByteBufAllocator> RCVBUF_ALLOCATOR = valueOf("RCVBUF_ALLOCATOR");
     public static final ChannelOption<MessageSizeEstimator> MESSAGE_SIZE_ESTIMATOR = valueOf("MESSAGE_SIZE_ESTIMATOR");
 
+    // 连接时间超时
     public static final ChannelOption<Integer> CONNECT_TIMEOUT_MILLIS = valueOf("CONNECT_TIMEOUT_MILLIS");
     /**
      * @deprecated Use {@link MaxMessagesRecvByteBufAllocator}
@@ -97,6 +102,8 @@ public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
             valueOf("WRITE_BUFFER_WATER_MARK");
 
     public static final ChannelOption<Boolean> ALLOW_HALF_CLOSURE = valueOf("ALLOW_HALF_CLOSURE");
+
+    // 自动读
     public static final ChannelOption<Boolean> AUTO_READ = valueOf("AUTO_READ");
 
     /**
@@ -120,6 +127,7 @@ public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
     public static final ChannelOption<Integer> IP_MULTICAST_TTL = valueOf("IP_MULTICAST_TTL");
     public static final ChannelOption<Boolean> IP_MULTICAST_LOOP_DISABLED = valueOf("IP_MULTICAST_LOOP_DISABLED");
 
+    // TCP不延迟
     public static final ChannelOption<Boolean> TCP_NODELAY = valueOf("TCP_NODELAY");
 
     @Deprecated

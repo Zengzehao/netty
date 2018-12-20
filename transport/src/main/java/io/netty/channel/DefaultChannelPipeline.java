@@ -61,16 +61,23 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private static final AtomicReferenceFieldUpdater<DefaultChannelPipeline, MessageSizeEstimator.Handle> ESTIMATOR =
             AtomicReferenceFieldUpdater.newUpdater(
                     DefaultChannelPipeline.class, MessageSizeEstimator.Handle.class, "estimatorHandle");
+
+    // 头部
     final AbstractChannelHandlerContext head;
+    // 尾部
     final AbstractChannelHandlerContext tail;
 
+    // 通道
     private final Channel channel;
+    // 通道成功异步操作结果
     private final ChannelFuture succeededFuture;
     private final VoidChannelPromise voidPromise;
     private final boolean touch = ResourceLeakDetector.isEnabled();
 
+    //
     private Map<EventExecutorGroup, EventExecutor> childExecutors;
     private volatile MessageSizeEstimator.Handle estimatorHandle;
+    // 第一次注册
     private boolean firstRegistration = true;
 
     /**
@@ -116,6 +123,13 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return touch ? ReferenceCountUtil.touch(msg, next) : msg;
     }
 
+    /**
+     * 创建一个默认的上下文
+     * @param group
+     * @param name
+     * @param handler
+     * @return
+     */
     private AbstractChannelHandlerContext newContext(EventExecutorGroup group, String name, ChannelHandler handler) {
         return new DefaultChannelHandlerContext(this, childExecutor(group), name, handler);
     }
@@ -157,6 +171,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
             checkMultiplicity(handler);
+            //
             name = filterName(name, handler);
 
             newCtx = newContext(group, name, handler);
@@ -188,6 +203,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return this;
     }
 
+    // 加到链表头部
     private void addFirst0(AbstractChannelHandlerContext newCtx) {
         AbstractChannelHandlerContext nextCtx = head.next;
         newCtx.prev = head;
@@ -201,6 +217,15 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return addLast(null, name, handler);
     }
 
+    /**
+     * 同理，添加到尾部
+     * @param group    the {@link EventExecutorGroup} which will be used to execute the {@link ChannelHandler}
+     *                 methods
+     * @param name     the name of the handler to append
+     * @param handler  the handler to append
+     *
+     * @return
+     */
     @Override
     public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {
         final AbstractChannelHandlerContext newCtx;
@@ -629,6 +654,10 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         }
     }
 
+    /**
+     * 添加处理器
+     * @param ctx
+     */
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
         try {
             // We must call setAddComplete before calling handlerAdded. Otherwise if the handlerAdded method generates
@@ -854,11 +883,16 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return buf.toString();
     }
 
+    /**
+     * 通道注册之后会调用这个方法
+     * @return
+     */
     @Override
     public final ChannelPipeline fireChannelRegistered() {
         AbstractChannelHandlerContext.invokeChannelRegistered(head);
         return this;
     }
+
 
     @Override
     public final ChannelPipeline fireChannelUnregistered() {
@@ -936,24 +970,42 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         }
     }
 
+    /**
+     * 通道Active状态
+     * @return
+     */
     @Override
     public final ChannelPipeline fireChannelActive() {
         AbstractChannelHandlerContext.invokeChannelActive(head);
         return this;
     }
 
+    /**
+     * 通道断开
+     * @return
+     */
     @Override
     public final ChannelPipeline fireChannelInactive() {
         AbstractChannelHandlerContext.invokeChannelInactive(head);
         return this;
     }
 
+    /**
+     * 捕获异常
+     * @param cause
+     * @return
+     */
     @Override
     public final ChannelPipeline fireExceptionCaught(Throwable cause) {
         AbstractChannelHandlerContext.invokeExceptionCaught(head, cause);
         return this;
     }
 
+    /**
+     *
+     * @param event
+     * @return
+     */
     @Override
     public final ChannelPipeline fireUserEventTriggered(Object event) {
         AbstractChannelHandlerContext.invokeUserEventTriggered(head, event);
