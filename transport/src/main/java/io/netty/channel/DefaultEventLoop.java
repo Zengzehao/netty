@@ -46,6 +46,9 @@ public class DefaultEventLoop extends SingleThreadEventLoop {
         super(parent, executor, true);
     }
 
+    /**
+     * 线程启动的时候会执行这个方法
+     */
     @Override
     protected void run() {
         for (;;) {

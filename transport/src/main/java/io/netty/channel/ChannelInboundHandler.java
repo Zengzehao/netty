@@ -18,6 +18,7 @@ package io.netty.channel;
 /**
  * {@link ChannelHandler} which adds callbacks for state changes. This allows the user
  * to hook in to state changes easily.
+ * ChannelHandler添加回调当状态改变时。这允许用户去执行钩子操作当状态改变时
  */
 public interface ChannelInboundHandler extends ChannelHandler {
 

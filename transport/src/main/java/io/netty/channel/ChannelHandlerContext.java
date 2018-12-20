@@ -26,6 +26,7 @@ import java.nio.channels.Channels;
 
 /**
  * Enables a {@link ChannelHandler} to interact with its {@link ChannelPipeline}
+ * 使ChannelHandler能够与ChannelPipeline和其他处理器交互
  * and other handlers. Among other things a handler can notify the next {@link ChannelHandler} in the
  * {@link ChannelPipeline} as well as modify the {@link ChannelPipeline} it belongs to dynamically.
  *
@@ -126,11 +127,13 @@ public interface ChannelHandlerContext extends AttributeMap, ChannelInboundInvok
 
     /**
      * Return the {@link Channel} which is bound to the {@link ChannelHandlerContext}.
+     * 关联的Channel
      */
     Channel channel();
 
     /**
      * Returns the {@link EventExecutor} which is used to execute an arbitrary task.
+     * 事件执行器
      */
     EventExecutor executor();
 
@@ -138,11 +141,13 @@ public interface ChannelHandlerContext extends AttributeMap, ChannelInboundInvok
      * The unique name of the {@link ChannelHandlerContext}.The name was used when then {@link ChannelHandler}
      * was added to the {@link ChannelPipeline}. This name can also be used to access the registered
      * {@link ChannelHandler} from the {@link ChannelPipeline}.
+     * 名字
      */
     String name();
 
     /**
      * The {@link ChannelHandler} that is bound this {@link ChannelHandlerContext}.
+     * 处理器
      */
     ChannelHandler handler();
 

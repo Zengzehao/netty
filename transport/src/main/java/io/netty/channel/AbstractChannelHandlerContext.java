@@ -39,9 +39,12 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         implements ChannelHandlerContext, ResourceLeakHint {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(AbstractChannelHandlerContext.class);
+    // 下一个
     volatile AbstractChannelHandlerContext next;
+    // 前一个
     volatile AbstractChannelHandlerContext prev;
 
+    // handlerState 原子更新
     private static final AtomicIntegerFieldUpdater<AbstractChannelHandlerContext> HANDLER_STATE_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractChannelHandlerContext.class, "handlerState");
 
@@ -65,8 +68,11 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
 
     private final boolean inbound;
     private final boolean outbound;
+    // 默认的通道管道
     private final DefaultChannelPipeline pipeline;
+    // 名字
     private final String name;
+    // 有序
     private final boolean ordered;
 
     // Will be set to null if no child executor should be used, otherwise it will be set to the
@@ -125,6 +131,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
 
     @Override
     public ChannelHandlerContext fireChannelRegistered() {
+
         invokeChannelRegistered(findContextInbound());
         return this;
     }

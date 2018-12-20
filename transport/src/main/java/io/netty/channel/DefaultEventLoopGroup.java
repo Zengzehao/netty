@@ -20,6 +20,7 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * {@link MultithreadEventLoopGroup} which must be used for the local transport.
+ *
  */
 public class DefaultEventLoopGroup extends MultithreadEventLoopGroup {
 

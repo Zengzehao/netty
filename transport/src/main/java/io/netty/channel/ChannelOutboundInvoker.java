@@ -24,6 +24,7 @@ import java.net.SocketAddress;
 public interface ChannelOutboundInvoker {
 
     /**
+     * 请求绑定给定socket地址，当操作完成，无论成功或者失败，通知ChannelFuture
      * Request to bind to the given {@link SocketAddress} and notify the {@link ChannelFuture} once the operation
      * completes, either because the operation was successful or because of an error.
      * <p>
@@ -35,6 +36,7 @@ public interface ChannelOutboundInvoker {
     ChannelFuture bind(SocketAddress localAddress);
 
     /**
+     * 连接
      * Request to connect to the given {@link SocketAddress} and notify the {@link ChannelFuture} once the operation
      * completes, either because the operation was successful or because of an error.
      * <p>
@@ -216,6 +218,7 @@ public interface ChannelOutboundInvoker {
 
     /**
      * Request to flush all pending messages via this ChannelOutboundInvoker.
+     * 通过Outbound通道Invoker，刷新待发送的消息到transport
      */
     ChannelOutboundInvoker flush();
 

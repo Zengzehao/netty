@@ -34,12 +34,15 @@ import java.util.NoSuchElementException;
  * <a href="http://www.oracle.com/technetwork/java/interceptingfilter-142169.html">Intercepting Filter</a> pattern
  * to give a user full control over how an event is handled and how the {@link ChannelHandler}s in a pipeline
  * interact with each other.
+ * ChannelHandler列表用来处理或者拦截 inbound events and outbound的操作
  *
  * <h3>Creation of a pipeline</h3>
  *
  * Each channel has its own pipeline and it is created automatically when a new channel is created.
+ * 每个Channel有自己的管道并且是自动创建的
  *
  * <h3>How an event flows in a pipeline</h3>
+ * 一个事件是怎么流动在一个管道中
  *
  * The following diagram describes how I/O events are processed by {@link ChannelHandler}s in a {@link ChannelPipeline}
  * typically. An I/O event is handled by either a {@link ChannelInboundHandler} or a {@link ChannelOutboundHandler}
@@ -92,12 +95,15 @@ import java.util.NoSuchElementException;
  * diagram.  The inbound data is often read from a remote peer via the actual input operation such as
  * {@link SocketChannel#read(ByteBuffer)}.  If an inbound event goes beyond the top inbound handler, it is discarded
  * silently, or logged if it needs your attention.
+ *
+ * An inbound event 简单来说就是客户端的请求嘛
  * <p>
  * An outbound event is handled by the outbound handler in the top-down direction as shown on the right side of the
  * diagram.  An outbound handler usually generates or transforms the outbound traffic such as write requests.
  * If an outbound event goes beyond the bottom outbound handler, it is handled by an I/O thread associated with the
  * {@link Channel}. The I/O thread often performs the actual output operation such as
  * {@link SocketChannel#write(ByteBuffer)}.
+ * An outbound event那就是服务器返回给客户端
  * <p>
  * For example, let us assume that we created the following pipeline:
  * <pre>
@@ -166,7 +172,9 @@ import java.util.NoSuchElementException;
  *     }
  * }
  *
- * public class MyOutboundHandler extends {@link ChannelOutboundHandlerAdapter} {
+ * public class MyOutboundHandler extends {@link
+ *
+ * } {
  *     {@code @Override}
  *     public void close({@link ChannelHandlerContext} ctx, {@link ChannelPromise} promise) {
  *         System.out.println("Closing ..");
@@ -176,6 +184,7 @@ import java.util.NoSuchElementException;
  * </pre>
  *
  * <h3>Building a pipeline</h3>
+ * 构建管道
  * <p>
  * A user is supposed to have one or more {@link ChannelHandler}s in a pipeline to receive I/O events (e.g. read) and
  * to request I/O operations (e.g. write and close).  For example, a typical server will have the following handlers
@@ -184,8 +193,11 @@ import java.util.NoSuchElementException;
  *
  * <ol>
  * <li>Protocol Decoder - translates binary data (e.g. {@link ByteBuf}) into a Java object.</li>
+ * 协议解码
  * <li>Protocol Encoder - translates a Java object into binary data.</li>
+ * 协议编码
  * <li>Business Logic Handler - performs the actual business logic (e.g. database access).</li>
+ * 业务逻辑处理
  * </ol>
  *
  * and it could be represented as shown in the following example:
@@ -208,10 +220,12 @@ import java.util.NoSuchElementException;
  * </pre>
  *
  * <h3>Thread safety</h3>
+ * 线程安全
  * <p>
  * A {@link ChannelHandler} can be added or removed at any time because a {@link ChannelPipeline} is thread safe.
  * For example, you can insert an encryption handler when sensitive information is about to be exchanged, and remove it
  * after the exchange.
+ * Channel管道
  */
 public interface ChannelPipeline
         extends ChannelInboundInvoker, ChannelOutboundInvoker, Iterable<Entry<String, ChannelHandler>> {
