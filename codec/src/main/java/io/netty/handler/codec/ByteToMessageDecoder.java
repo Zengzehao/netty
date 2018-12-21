@@ -30,6 +30,7 @@ import java.util.List;
  * {@link ChannelInboundHandlerAdapter} which decodes bytes in a stream-like fashion from one {@link ByteBuf} to an
  * other Message type.
  *
+ *
  * For example here is an implementation which reads all readable bytes from
  * the input {@link ByteBuf} and create a new {@link ByteBuf}.
  *
@@ -294,6 +295,7 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
 
                 int size = out.size();
                 decodeWasNull = !out.insertSinceRecycled();
+                // 这里会把转换之后的ByteBuf传递给下一个Handler
                 fireChannelRead(ctx, out, size);
                 out.recycle();
             }
@@ -317,9 +319,11 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
 
     /**
      * Get {@code numElements} out of the {@link CodecOutputList} and forward these through the pipeline.
+     *
      */
     static void fireChannelRead(ChannelHandlerContext ctx, CodecOutputList msgs, int numElements) {
         for (int i = 0; i < numElements; i ++) {
+            // 传递给下一个Handler
             ctx.fireChannelRead(msgs.getUnsafe(i));
         }
     }
@@ -438,6 +442,7 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
                 }
 
                 int oldInputLength = in.readableBytes();
+                // 重点
                 decodeRemovalReentryProtection(ctx, in, out);
 
                 // Check if this handler was removed before continuing the loop.
@@ -477,6 +482,7 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
      * Decode the from one {@link ByteBuf} to an other. This method will be called till either the input
      * {@link ByteBuf} has nothing to read when return from this method or till nothing was read from the input
      * {@link ByteBuf}.
+     * 把一个ByteBuf解码成为其他的，这个方法会被调用知道输入的ByteBuf没有东西可以读
      *
      * @param ctx           the {@link ChannelHandlerContext} which this {@link ByteToMessageDecoder} belongs to
      * @param in            the {@link ByteBuf} from which to read data

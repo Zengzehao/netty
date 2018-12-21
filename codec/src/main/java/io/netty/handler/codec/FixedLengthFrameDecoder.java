@@ -35,8 +35,11 @@ import java.util.List;
  * | ABC | DEF | GHI |
  * +-----+-----+-----+
  * </pre>
+ * 解码器 用于分割接收的ByteBuf用固定的长度
+ *
  */
 public class FixedLengthFrameDecoder extends ByteToMessageDecoder {
+
 
     private final int frameLength;
 

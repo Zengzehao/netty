@@ -25,6 +25,7 @@ import static io.netty.util.internal.ObjectUtil.checkNotNull;
 
 /**
  * Special {@link AbstractList} implementation which is used within our codec base classes.
+ *
  */
 final class CodecOutputList extends AbstractList<Object> implements RandomAccess {
 
