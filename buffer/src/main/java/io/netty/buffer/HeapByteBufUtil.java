@@ -17,6 +17,7 @@ package io.netty.buffer;
 
 /**
  * Utility class for heap buffers.
+ * heap buffer的工具类
  */
 final class HeapByteBufUtil {
 

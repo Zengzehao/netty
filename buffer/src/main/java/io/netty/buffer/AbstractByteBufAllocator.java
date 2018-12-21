@@ -23,8 +23,10 @@ import io.netty.util.internal.StringUtil;
 
 /**
  * Skeletal {@link ByteBufAllocator} implementation to extend.
+ * 简要实现
  */
 public abstract class AbstractByteBufAllocator implements ByteBufAllocator {
+
     static final int DEFAULT_INITIAL_CAPACITY = 256;
     static final int DEFAULT_MAX_CAPACITY = Integer.MAX_VALUE;
     static final int DEFAULT_MAX_COMPONENTS = 16;
@@ -78,7 +80,9 @@ public abstract class AbstractByteBufAllocator implements ByteBufAllocator {
         return buf;
     }
 
+    // directBuffer
     private final boolean directByDefault;
+    // 空的ByteBuf
     private final ByteBuf emptyBuf;
 
     /**
@@ -234,11 +238,13 @@ public abstract class AbstractByteBufAllocator implements ByteBufAllocator {
 
     /**
      * Create a heap {@link ByteBuf} with the given initialCapacity and maxCapacity.
+     *
      */
     protected abstract ByteBuf newHeapBuffer(int initialCapacity, int maxCapacity);
 
     /**
      * Create a direct {@link ByteBuf} with the given initialCapacity and maxCapacity.
+     * 创建一个direct ByteBuf
      */
     protected abstract ByteBuf newDirectBuffer(int initialCapacity, int maxCapacity);
 

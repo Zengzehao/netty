@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * Expose metrics for an arena.
+ * 暴露arena的量度
  */
 public interface PoolArenaMetric {
 

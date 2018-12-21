@@ -66,10 +66,13 @@ public abstract class AbstractByteBuf extends ByteBuf {
     static final ResourceLeakDetector<ByteBuf> leakDetector =
             ResourceLeakDetectorFactory.instance().newResourceLeakDetector(ByteBuf.class);
 
+    // 可读下标指针
     int readerIndex;
+    // 可写下标指针
     int writerIndex;
     private int markedReaderIndex;
     private int markedWriterIndex;
+    // 最大的容量
     private int maxCapacity;
 
     protected AbstractByteBuf(int maxCapacity) {
@@ -115,6 +118,11 @@ public abstract class AbstractByteBuf extends ByteBuf {
         }
     }
 
+    /**
+     * 设置readerIndex
+     * @param readerIndex
+     * @return
+     */
     @Override
     public ByteBuf readerIndex(int readerIndex) {
         if (checkBounds) {
@@ -129,6 +137,11 @@ public abstract class AbstractByteBuf extends ByteBuf {
         return writerIndex;
     }
 
+    /**
+     * 设置writerIndex
+     * @param writerIndex
+     * @return
+     */
     @Override
     public ByteBuf writerIndex(int writerIndex) {
         if (checkBounds) {
@@ -147,12 +160,20 @@ public abstract class AbstractByteBuf extends ByteBuf {
         return this;
     }
 
+    /**
+     * clear()设置readerIndex 和writerIndex为o
+     * @return
+     */
     @Override
     public ByteBuf clear() {
         readerIndex = writerIndex = 0;
         return this;
     }
 
+    /**
+     * 是否是可读的，writerIndex要大于readerIndex
+     * @return
+     */
     @Override
     public boolean isReadable() {
         return writerIndex > readerIndex;
@@ -173,11 +194,19 @@ public abstract class AbstractByteBuf extends ByteBuf {
         return capacity() - writerIndex >= numBytes;
     }
 
+    /**
+     * 返回可读的字节数
+     * @return
+     */
     @Override
     public int readableBytes() {
         return writerIndex - readerIndex;
     }
 
+    /**
+     * 返回可写的字节书
+     * @return
+     */
     @Override
     public int writableBytes() {
         return capacity() - writerIndex;

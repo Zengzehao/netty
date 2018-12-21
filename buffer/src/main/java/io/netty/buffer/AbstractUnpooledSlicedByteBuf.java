@@ -121,7 +121,8 @@ abstract class AbstractUnpooledSlicedByteBuf extends AbstractDerivedByteBuf {
     }
 
     @Override
-    protected byte _getByte(int index) {
+    protected byte
+    _getByte(int index) {
         return unwrap().getByte(idx(index));
     }
 
