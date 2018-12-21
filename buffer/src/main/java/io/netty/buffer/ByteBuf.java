@@ -266,6 +266,8 @@ import java.nio.charset.UnsupportedCharsetException;
  *
  * Please refer to {@link ByteBufInputStream} and
  * {@link ByteBufOutputStream}.
+ *
+ * ByteBuf通过两个位置指针来协助缓冲区的读写操作，读操作使用readerIndex，写操作使用writerIndex
  */
 @SuppressWarnings("ClassMayBeInterface")
 public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
@@ -2214,6 +2216,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * This method is identical to {@code buf.copy(buf.readerIndex(), buf.readableBytes())}.
      * This method does not modify {@code readerIndex} or {@code writerIndex} of
      * this buffer.
+     * 复制一个新的对象ByteBuf
      */
     public abstract ByteBuf copy();
 
@@ -2235,6 +2238,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * <p>
      * Also be aware that this method will NOT call {@link #retain()} and so the
      * reference count will NOT be increased.
+     * 返回当前可读的子缓冲区ByteBuf，从readerIndex到writerIndex，内容与原来的ByteBuf共享，
+     * 但独立维护读写索引
      */
     public abstract ByteBuf slice();
 
@@ -2289,6 +2294,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * @return A buffer whose readable content is equivalent to the buffer returned by {@link #slice()}.
      * However this buffer will share the capacity of the underlying buffer, and therefore allows access to all of the
      * underlying content if necessary.
+     * 返回当前的ByteBuf的复制对象，复制的对象与原来的ByteBuf共享内容，但是维护独立的指针
      */
     public abstract ByteBuf duplicate();
 
