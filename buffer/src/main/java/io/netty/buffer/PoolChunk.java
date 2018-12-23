@@ -107,6 +107,7 @@ final class PoolChunk<T> implements PoolChunkMetric {
 
     private static final int INTEGER_SIZE_MINUS_ONE = Integer.SIZE - 1;
 
+    // 内存中的一大块连续的区域
     final PoolArena<T> arena;
     final T memory;
     final boolean unpooled;

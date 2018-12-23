@@ -24,6 +24,8 @@ import java.nio.ByteOrder;
 
 /**
  * 池化的ByteBuf
+ * 基于对象池的ByteBuf可以重用ByteBuf对象，它自己维护了一个内存池
+ * 可以循环利用创建的ByteBuf，提升内存的使用效率，降低由于高负载导致的频繁GC。
  * @param <T>
  */
 abstract class PooledByteBuf<T> extends AbstractReferenceCountedByteBuf {

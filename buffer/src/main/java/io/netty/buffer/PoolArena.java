@@ -28,6 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.max;
 
+/**
+ * 为了集中管理内存的分配和释放，同时提高分配和释放内存时候的性能，
+ * 很多框架和应用都会预先申请一大块内存，然后通过提供相应的分配和释放接口来使用内存。
+ * @param <T>
+ */
 abstract class PoolArena<T> implements PoolArenaMetric {
     static final boolean HAS_UNSAFE = PlatformDependent.hasUnsafe();
 

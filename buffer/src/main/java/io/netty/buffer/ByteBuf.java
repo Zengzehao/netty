@@ -268,6 +268,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * {@link ByteBufOutputStream}.
  *
  * ByteBuf通过两个位置指针来协助缓冲区的读写操作，读操作使用readerIndex，写操作使用writerIndex
+ * ByteBuf支持随机读写
  */
 @SuppressWarnings("ClassMayBeInterface")
 public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {

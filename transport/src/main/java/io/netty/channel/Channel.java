@@ -76,7 +76,16 @@ import java.net.SocketAddress;
  */
 
 /**
+ * 网络操作抽象类
+ * 网络的读写，客户端发起连接，主动关闭连接，链路关闭，获取通信双方的网络地址等，还包含来Netty框架相关的一些功能
  * Channel, 网络套接字 或者是一种能够进行I/O操作，如读、写、连接和绑定的组件。
+ *
+ * Netty为什么不使用JDK NIO原生的Channel呢？
+ * 1。JDK的SocketChannel和ServerSocketChannel没有统一接口供业务开发者使用
+ * 2。JDK的SocketChannel和ServerSocketChannel的主要职责就是网络I/O操作，是SPI接口，难以拓展
+ * 3。Netty的Channel需要能够跟Netty的整体构架框架融合在一起，如I/O模型,基于ChannelPipeline的
+ * 定制模型，以及基于元数据描述配置化的TCP参数等
+ * 4。自定义的Channel，功能实现更加灵活
  */
 public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparable<Channel> {
 

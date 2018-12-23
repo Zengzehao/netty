@@ -63,6 +63,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
         }
     }
 
+    // 检测资源是否泄漏
     static final ResourceLeakDetector<ByteBuf> leakDetector =
             ResourceLeakDetectorFactory.instance().newResourceLeakDetector(ByteBuf.class);
 
@@ -921,6 +922,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf readBytes(byte[] dst, int dstIndex, int length) {
+        // 对缓冲区的可用空间进行校验
         checkReadableBytes(length);
         getBytes(readerIndex, dst, dstIndex, length);
         readerIndex += length;

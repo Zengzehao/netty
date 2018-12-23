@@ -18,6 +18,10 @@ package io.netty.buffer;
 /**
  * Utility class for heap buffers.
  * heap buffer的工具类
+ * 堆内存字节缓冲区
+ * 优点：内存的分配和回收速度快，可以被JVM自动回收。
+ * 缺点：如果进行Socket的I/O读写，需要额外做一次内存复制，将堆内存对应的缓冲区复制到内核Channel中，性能会有一定程度的下降。
+ *
  */
 final class HeapByteBufUtil {
 
