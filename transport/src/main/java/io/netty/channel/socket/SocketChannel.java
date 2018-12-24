@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 
 /**
  * A TCP/IP socket {@link Channel}.
+ * 客户端的
  */
 public interface SocketChannel extends DuplexChannel {
     @Override

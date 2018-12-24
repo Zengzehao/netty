@@ -370,6 +370,10 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         }
     }
 
+    /**
+     * 调用invokeChannelRead
+     * @param msg
+     */
     private void invokeChannelRead(Object msg) {
         if (invokeHandler()) {
             try {

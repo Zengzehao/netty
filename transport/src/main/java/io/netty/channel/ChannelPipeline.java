@@ -16,6 +16,7 @@
 package io.netty.channel;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.nio.AbstractNioByteChannel;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 
@@ -226,6 +227,8 @@ import java.util.NoSuchElementException;
  * For example, you can insert an encryption handler when sensitive information is about to be exchanged, and remove it
  * after the exchange.
  * Channel管道
+ * 它将Channel的数据管道抽象为ChannelPipeline，消息在ChannelPipeline中流动
+ * ChannelPipeline持有I/O事件拦截器ChannelHandler的链表
  */
 public interface ChannelPipeline
         extends ChannelInboundInvoker, ChannelOutboundInvoker, Iterable<Entry<String, ChannelHandler>> {
@@ -626,6 +629,11 @@ public interface ChannelPipeline
     @Override
     ChannelPipeline fireUserEventTriggered(Object event);
 
+    /**
+     * {@link AbstractNioByteChannel#read()}
+     * @param msg
+     * @return
+     */
     @Override
     ChannelPipeline fireChannelRead(Object msg);
 

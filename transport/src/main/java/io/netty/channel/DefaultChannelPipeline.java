@@ -42,6 +42,8 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 /**
  * The default {@link ChannelPipeline} implementation.  It is usually created
  * by a {@link Channel} implementation when the {@link Channel} is created.
+ * Pipeline本身并不直接进行I/O操作，最终都是由Unsafe和Channel来实现真正的I/O操作的。
+ * Pipeline负责将I/O事件进行调度和传播
  */
 public class DefaultChannelPipeline implements ChannelPipeline {
 
@@ -62,6 +64,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             AtomicReferenceFieldUpdater.newUpdater(
                     DefaultChannelPipeline.class, MessageSizeEstimator.Handle.class, "estimatorHandle");
 
+    // 维护了一个ChannelHandler的链表
     // 头部
     final AbstractChannelHandlerContext head;
     // 尾部

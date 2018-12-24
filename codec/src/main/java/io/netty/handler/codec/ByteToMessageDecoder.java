@@ -67,6 +67,7 @@ import java.util.List;
  * Some methods such as {@link ByteBuf#readBytes(int)} will cause a memory leak if the returned buffer
  * is not released or added to the <tt>out</tt> {@link List}. Use derived buffers like {@link ByteBuf#readSlice(int)}
  * to avoid leaking memory.
+ * 利用NIO进行网络编程时，往往需要将读取到的字节数组或者字节缓冲区解码为业务可以使用的POJO对象。
  */
 public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter {
 
@@ -147,6 +148,7 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
     private static final byte STATE_CALLING_CHILD_DECODE = 1;
     private static final byte STATE_HANDLER_REMOVED_PENDING = 2;
 
+    // 字节缓冲区
     ByteBuf cumulation;
     private Cumulator cumulator = MERGE_CUMULATOR;
     private boolean singleDecode;
@@ -264,18 +266,29 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
      */
     protected void handlerRemoved0(ChannelHandlerContext ctx) throws Exception { }
 
+    /**
+     * 读取
+     * @param ctx
+     * @param msg
+     * @throws Exception
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof ByteBuf) {
             CodecOutputList out = CodecOutputList.newInstance();
             try {
                 ByteBuf data = (ByteBuf) msg;
+                // 通过cumulation是否为空判断解码器是否缓存来没有解码完成的半包消息
+                // 如果为空，说明是首次解码或者最近一次处理完来半包消息，没有缓存的半包消息需要处理
                 first = cumulation == null;
                 if (first) {
                     cumulation = data;
                 } else {
+                    // 如果cumulation缓存有上次没有解码完成的ByteBuf，则进行复制操作
+                    // 将需要解码的ByteBuf复制到cumulation
                     cumulation = cumulator.cumulate(ctx.alloc(), cumulation, data);
                 }
+                //解码
                 callDecode(ctx, cumulation, out);
             } catch (DecoderException e) {
                 throw e;

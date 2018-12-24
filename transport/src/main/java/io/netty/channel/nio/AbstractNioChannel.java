@@ -55,7 +55,10 @@ public abstract class AbstractNioChannel extends AbstractChannel {
             new ClosedChannelException(), AbstractNioChannel.class, "doClose()");
 
     private final SelectableChannel ch;
+    // JDK SelectionKey 的OP_READ
     protected final int readInterestOp;
+    // SelectionKey是Channel注册到EventLoop后返回的选择键
+    // 由于Channel会面临多个业务线程的并发写操作，所以要用volatile
     volatile SelectionKey selectionKey;
     boolean readPending;
     private final Runnable clearReadPendingRunnable = new Runnable() {
@@ -380,9 +383,19 @@ public abstract class AbstractNioChannel extends AbstractChannel {
 
     @Override
     protected void doRegister() throws Exception {
+        // 标识注册操作是否成功
         boolean selected = false;
         for (;;) {
             try {
+                // 调用SelectableChannel的register()方法
+                // 将当前的Channel注册到EventLoop的多路复用器上
+                // 注册Channel的时候需要指定监听的网络操作位
+                // OP_READ = 1 << 0 读操作位
+                // OP_WRITE = 1 << 2 写操作位
+                // OP_CONNECT = 1 << 3 客户端连接服务器操作位
+                // OP_ACCEPT = 1 << 4 服务器接收客户端连接操作位
+
+                // 这里注册的是0，说明对任何事件都不敢兴趣
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
@@ -416,7 +429,10 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         readPending = true;
 
         final int interestOps = selectionKey.interestOps();
+        // readInterestOp 是构造函数传进来的 SelectionKey.OP_READ
+        // 等于0 说明没有注册读事件
         if ((interestOps & readInterestOp) == 0) {
+            // 监听网络的读事件
             selectionKey.interestOps(interestOps | readInterestOp);
         }
     }

@@ -20,6 +20,7 @@ import java.net.SocketAddress;
 /**
  * 下行事件处理器
  * {@link ChannelHandler} which will get notified for IO-outbound-operations.
+ * OutBound事件通常是用户主动发起的网络I/O操作
  */
 public interface ChannelOutboundHandler extends ChannelHandler {
     /**

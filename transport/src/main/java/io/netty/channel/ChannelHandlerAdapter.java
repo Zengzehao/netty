@@ -22,7 +22,9 @@ import java.util.Map;
 
 /**
  * Skeleton implementation of a {@link ChannelHandler}.
- * ChannelHandler的实现
+ * 对于大多数的ChannelHandler会选择性地拦截和处理某个或某些事件，其他的事件会忽略
+ * 由下一个ChannelHandler进行拦截和处理
+ * 所以才有来ChannelHandlerAdapter，用户只需要对感兴趣的方法进行覆盖就可以啦
  */
 public abstract class ChannelHandlerAdapter implements ChannelHandler {
 

@@ -48,6 +48,7 @@ public interface ChannelOutboundInvoker {
      * {@link ChannelOutboundHandler#connect(ChannelHandlerContext, SocketAddress, SocketAddress, ChannelPromise)}
      * method called of the next {@link ChannelOutboundHandler} contained in the {@link ChannelPipeline} of the
      * {@link Channel}.
+     * 客户端使用指定的服务器地址remoteAddress发起连接请求
      */
     ChannelFuture connect(SocketAddress remoteAddress);
 
@@ -156,6 +157,7 @@ public interface ChannelOutboundInvoker {
      * {@link ChannelOutboundHandler#disconnect(ChannelHandlerContext, ChannelPromise)}
      * method called of the next {@link ChannelOutboundHandler} contained in the {@link ChannelPipeline} of the
      * {@link Channel}.
+     * 请求断开与远程通信对断的连接
      */
     ChannelFuture disconnect(ChannelPromise promise);
 
@@ -171,6 +173,8 @@ public interface ChannelOutboundInvoker {
      * {@link ChannelOutboundHandler#close(ChannelHandlerContext, ChannelPromise)}
      * method called of the next {@link ChannelOutboundHandler} contained in the {@link ChannelPipeline} of the
      * {@link Channel}.
+     * 主动关闭当前连接，通过ChannelPromise设置操作结果并进行结果通知
+     * 该操作会联级触发ChannelPipeline中所有Handler的close
      */
     ChannelFuture close(ChannelPromise promise);
 
@@ -199,6 +203,8 @@ public interface ChannelOutboundInvoker {
      * {@link ChannelOutboundHandler#read(ChannelHandlerContext)}
      * method called of the next {@link ChannelOutboundHandler} contained in the {@link ChannelPipeline} of the
      * {@link Channel}.
+     * 从当前的Channel中读取数据到第一个inbound缓冲区，如果读取成功会触发ChannelInboundHandler#channelRead(ChannelHandlerContext, Object)
+     * 然后接着又会触发ChannelInboundHandler#channelReadComplete(ChannelHandlerContext)，以致于handler可以决定是否继续读取
      */
     ChannelOutboundInvoker read();
 
@@ -206,6 +212,8 @@ public interface ChannelOutboundInvoker {
      * Request to write a message via this {@link ChannelHandlerContext} through the {@link ChannelPipeline}.
      * This method will not request to actual flush, so be sure to call {@link #flush()}
      * once you want to request to flush all pending data to the actual transport.
+     * 请求将当前的msg通过ChannelPipeline写入到目标Channel中。
+     * 注意：write操作只是将消息存入到消息发送队列中，并没有真正被发送，只有调用flush操作才会写入到Channel中，发送给对方
      */
     ChannelFuture write(Object msg);
 
@@ -229,6 +237,7 @@ public interface ChannelOutboundInvoker {
 
     /**
      * Shortcut for call {@link #write(Object)} and {@link #flush()}.
+     * 相当与调用write()和flush()
      */
     ChannelFuture writeAndFlush(Object msg);
 

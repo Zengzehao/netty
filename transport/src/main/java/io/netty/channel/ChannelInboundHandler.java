@@ -16,7 +16,7 @@
 package io.netty.channel;
 
 /**
- * 上行事件处理器
+ * inbound事件处理器，通常是由I/O线程触发
  * {@link ChannelHandler} which adds callbacks for state changes. This allows the user
  * to hook in to state changes easily.
  * ChannelHandler添加回调当状态改变时。这允许用户去执行钩子操作当状态改变时
@@ -36,17 +36,20 @@ public interface ChannelInboundHandler extends ChannelHandler {
 
     /**
      * The {@link Channel} of the {@link ChannelHandlerContext} is now active
+     * TCP链路建立成功，Channel激活事件
      */
     void channelActive(ChannelHandlerContext ctx) throws Exception;
 
     /**
      * The {@link Channel} of the {@link ChannelHandlerContext} was registered is now inactive and reached its
      * end of lifetime.
+     * TCP关闭连接，不可用
      */
     void channelInactive(ChannelHandlerContext ctx) throws Exception;
 
     /**
      * Invoked when the current {@link Channel} has read a message from the peer.
+     * 读事件
      */
     void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception;
 
@@ -60,6 +63,7 @@ public interface ChannelInboundHandler extends ChannelHandler {
 
     /**
      * Gets called if an user event was triggered.
+     * 用户自定义事件
      */
     void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception;
 

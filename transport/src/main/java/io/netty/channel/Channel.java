@@ -86,6 +86,12 @@ import java.net.SocketAddress;
  * 3。Netty的Channel需要能够跟Netty的整体构架框架融合在一起，如I/O模型,基于ChannelPipeline的
  * 定制模型，以及基于元数据描述配置化的TCP参数等
  * 4。自定义的Channel，功能实现更加灵活
+ *
+ *
+ * Channel的设计理念
+ * 1。在Channel接口层，采用Facade模式进行统一封装，经网络I/O操作、网络I/O相关联的其他操作封装起来，统一对外提供
+ * 2。Channel接口的定义尽量大而全
+ * 3。具体实现采用聚合而非包含的方式，将相关的功能类聚合在Channel中，由Channel统一负责分配和调度，功能实现更加灵活
  */
 public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparable<Channel> {
 
@@ -98,6 +104,9 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
     /**
      * Return the {@link EventLoop} this {@link Channel} was registered to.
      * Channel是被哪个EventLoop注册的
+     *
+     * Channel需要注册到EventLoop的多路复用器上，用于处理I/O事件
+     * EventLoop本质上就是处理网络读写事件的Reactor线程
      */
     EventLoop eventLoop();
 
@@ -111,23 +120,25 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
 
     /**
      * Returns the configuration of this channel.
-     * 配置
+     * 获取当前Channel的配置信息
      */
     ChannelConfig config();
 
     /**
      * Returns {@code true} if the {@link Channel} is open and may get active later
-     *
+     * 判断当前Channel是否已经打开
      */
     boolean isOpen();
 
     /**
      * Returns {@code true} if the {@link Channel} is registered with an {@link EventLoop}.
+     * 判断当前Channel是否已经注册到EventLoop上
      */
     boolean isRegistered();
 
     /**
      * Return {@code true} if the {@link Channel} is active and so connected.
+     * 判断当前Channel是否已经处于激活状态
      */
     boolean isActive();
 
@@ -227,6 +238,7 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
      *   <li>{@link #deregister(ChannelPromise)}</li>
      *   <li>{@link #voidPromise()}</li>
      * </ul>
+     * 内部接口，聚合在Channel中协助进行网络读写相关的操作，因为的设计初衷就是Channel的内部辅助类
      */
     interface Unsafe {
 
@@ -239,24 +251,28 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
         /**
          * Return the {@link SocketAddress} to which is bound local or
          * {@code null} if none.
+         * 本地绑定的Socket地址
          */
         SocketAddress localAddress();
 
         /**
          * Return the {@link SocketAddress} to which is bound remote or
          * {@code null} if none is bound yet.
+         * 通信对端的Socket地址
          */
         SocketAddress remoteAddress();
 
         /**
          * Register the {@link Channel} of the {@link ChannelPromise} and notify
          * the {@link ChannelFuture} once the registration was complete.
+         * 注册到多路复用器上，一旦注册操作完成，通知ChannelPromise
          */
         void register(EventLoop eventLoop, ChannelPromise promise);
 
         /**
          * Bind the {@link SocketAddress} to the {@link Channel} of the {@link ChannelPromise} and notify
          * it once its done.
+         * 绑定
          */
         void bind(SocketAddress localAddress, ChannelPromise promise);
 
@@ -266,24 +282,28 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
          * pass {@code null} to it.
          *
          * The {@link ChannelPromise} will get notified once the connect operation was complete.
+         * 连接
          */
         void connect(SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise);
 
         /**
          * Disconnect the {@link Channel} of the {@link ChannelFuture} and notify the {@link ChannelPromise} once the
          * operation was complete.
+         * 断开连接
          */
         void disconnect(ChannelPromise promise);
 
         /**
          * Close the {@link Channel} of the {@link ChannelPromise} and notify the {@link ChannelPromise} once the
          * operation was complete.
+         * 关闭
          */
         void close(ChannelPromise promise);
 
         /**
          * Closes the {@link Channel} immediately without firing any events.  Probably only useful
          * when registration attempt failed.
+         *
          */
         void closeForcibly();
 
@@ -301,11 +321,13 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
 
         /**
          * Schedules a write operation.
+         * 写
          */
         void write(Object msg, ChannelPromise promise);
 
         /**
          * Flush out all write operations scheduled via {@link #write(Object, ChannelPromise)}.
+         * 刷新
          */
         void flush();
 

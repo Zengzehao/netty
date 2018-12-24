@@ -39,6 +39,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 /**
  * A skeletal {@link Channel} implementation.
+ * 聚合了所有Channel使用到的能力对象，由AbstractChannel提供初始化和统一封装
  */
 public abstract class AbstractChannel extends DefaultAttributeMap implements Channel {
 
@@ -60,6 +61,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
     private final Channel parent;
     // id
     private final ChannelId id;
+    // Unsafe实例
     private final Unsafe unsafe;
 
     // 默认的通达管道
@@ -69,7 +71,6 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
     // 关闭的异步操作
     private final CloseFuture closeFuture = new CloseFuture(this);
 
-    // TODO 为什么会有两个地址
     // 本地地址
     private volatile SocketAddress localAddress;
     // 远程地址
