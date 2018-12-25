@@ -47,10 +47,17 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
                              implements io.netty.channel.socket.ServerSocketChannel {
 
     private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
+
+    // 默认的SelectorProvider
     private static final SelectorProvider DEFAULT_SELECTOR_PROVIDER = SelectorProvider.provider();
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(NioServerSocketChannel.class);
 
+    /**
+     * 创建一个新的ServerSocketChannel
+     * @param provider
+     * @return
+     */
     private static ServerSocketChannel newSocket(SelectorProvider provider) {
         try {
             /**
@@ -86,7 +93,9 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
      * Create a new instance using the given {@link ServerSocketChannel}.
      */
     public NioServerSocketChannel(ServerSocketChannel channel) {
+        // 监听客户端连接
         super(null, channel, SelectionKey.OP_ACCEPT);
+        // 配置
         config = new NioServerSocketChannelConfig(this, javaChannel().socket());
     }
 
@@ -125,6 +134,11 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
         return SocketUtils.localSocketAddress(javaChannel().socket());
     }
 
+    /**
+     * 绑定
+     * @param localAddress
+     * @throws Exception
+     */
     @Override
     protected void doBind(SocketAddress localAddress) throws Exception {
         if (PlatformDependent.javaVersion() >= 7) {
@@ -147,6 +161,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
      */
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
+        // accept() 等待客户端的连接，会阻塞
         SocketChannel ch = SocketUtils.accept(javaChannel());
 
         try {

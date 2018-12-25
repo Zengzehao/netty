@@ -195,6 +195,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                 }
 
                 // 增加一个ServerBootstrapAcceptor
+                // 这里用来处理新的客户端连接
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -229,6 +230,9 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         return new Map.Entry[size];
     }
 
+    /**
+     * 服务器接收请求
+     */
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
@@ -259,6 +263,11 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             };
         }
 
+        /**
+         * 读取请求时，会先进入这个方法
+         * @param ctx
+         * @param msg
+         */
         @Override
         @SuppressWarnings("unchecked")
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -273,6 +282,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             }
 
             try {
+                // 注册新的连接
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {

@@ -1410,6 +1410,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         public void bind(
                 ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise)
                 throws Exception {
+            // bind I/O
             unsafe.bind(localAddress, promise);
         }
 

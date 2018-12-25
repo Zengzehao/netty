@@ -396,6 +396,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
                 // OP_ACCEPT = 1 << 4 服务器接收客户端连接操作位
 
                 // 这里注册的是0，说明对任何事件都不敢兴趣
+                // this是AbstractNioChannel，可以从SelectionKey.a]attachment()中拿到
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {

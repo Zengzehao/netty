@@ -94,6 +94,9 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
                 ((SocketChannelConfig) config).isAllowHalfClosure();
     }
 
+    /**
+     * 建立连接后用这个
+     */
     protected class NioByteUnsafe extends AbstractNioUnsafe {
 
         private void closeOnRead(ChannelPipeline pipeline) {
@@ -149,6 +152,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
             try {
                 do {
                     byteBuf = allocHandle.allocate(allocator);
+                    // doReadBytes 从Channel中把字节数组读取到ByteBuf中
                     allocHandle.lastBytesRead(doReadBytes(byteBuf));
                     if (allocHandle.lastBytesRead() <= 0) {
                         // nothing was read. release the buffer.

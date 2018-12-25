@@ -131,6 +131,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     private int cancelledKeys;
     private boolean needsToSelectAgain;
 
+    // 构造函数
     NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,
                  SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {
         super(parent, executor, false, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);
@@ -170,6 +171,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             throw new ChannelException("failed to open a new selector", e);
         }
 
+        // 不需要什么什么优化
         if (DISABLE_KEYSET_OPTIMIZATION) {
             return new SelectorTuple(unwrappedSelector);
         }
@@ -251,6 +253,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             logger.trace("failed to instrument a special java.util.Set into: {}", unwrappedSelector, e);
             return new SelectorTuple(unwrappedSelector);
         }
+        // 这里赋值
         selectedKeys = selectedKeySet;
         logger.trace("instrumented a special java.util.Set into: {}", unwrappedSelector);
         return new SelectorTuple(unwrappedSelector,
@@ -775,6 +778,11 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
     }
 
+    /**
+     * select
+     * @param oldWakenUp
+     * @throws IOException
+     */
     private void select(boolean oldWakenUp) throws IOException {
         Selector selector = this.selector;
         try {

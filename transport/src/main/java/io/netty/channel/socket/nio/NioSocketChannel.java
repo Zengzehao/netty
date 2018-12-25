@@ -360,7 +360,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
     }
 
     /**
-     * 读取字节
+     * 从Channel中读取字节
      * @param byteBuf
      * @return
      * @throws Exception

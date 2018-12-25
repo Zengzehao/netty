@@ -55,10 +55,14 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
         super.doBeginRead();
     }
 
+    /**
+     * 建立连接的时候用这个
+     */
     private final class NioMessageUnsafe extends AbstractNioUnsafe {
 
         private final List<Object> readBuf = new ArrayList<Object>();
 
+        // 读取新的客户端连接
         @Override
         public void read() {
             assert eventLoop().inEventLoop();
