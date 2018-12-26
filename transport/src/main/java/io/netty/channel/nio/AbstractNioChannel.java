@@ -430,10 +430,8 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         readPending = true;
 
         final int interestOps = selectionKey.interestOps();
-        // readInterestOp 是构造函数传进来的 SelectionKey.OP_READ
         // 等于0 说明没有注册读事件
         if ((interestOps & readInterestOp) == 0) {
-            // 监听网络的读事件
             selectionKey.interestOps(interestOps | readInterestOp);
         }
     }

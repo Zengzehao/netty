@@ -429,6 +429,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     protected void run() {
         for (;;) {
             try {
+                // 轮询注册到selector的所有的channel的I/O事件
                 try {
                     switch (selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())) {
                     case SelectStrategy.CONTINUE:
@@ -468,6 +469,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                         // the first case (BAD - wake-up required) and the second case
                         // (OK - no wake-up required).
 
+                        // 如果需要唤醒，中断select阻塞
                         if (wakenUp.get()) {
                             selector.wakeup();
                         }
@@ -482,6 +484,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                     continue;
                 }
 
+                // 2 处理产生网络I/O事件的channel
                 cancelledKeys = 0;
                 needsToSelectAgain = false;
                 final int ioRatio = this.ioRatio;
@@ -622,6 +625,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             // See https://github.com/netty/netty/issues/2363
             selectedKeys.keys[i] = null;
 
+            // 在AbstractNioChannel的doRegister()方法，会把对应Channel放进去
             final Object a = k.attachment();
 
             if (a instanceof AbstractNioChannel) {
@@ -649,6 +653,11 @@ public final class NioEventLoop extends SingleThreadEventLoop {
      * @param ch
      */
     private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
+        //unsafe
+        //在创建NioServerSocketChannel时，其父类时AbstractNioMessageChannel，那么它对应的unsafe则是NioMessageUnsafe
+        // 相应地，NioSocketChannel对应的是NioByteUnsafe
+        // 就是说，客户端是服务端建立连接时，是用NioMessageUnsafe的read()读取数据
+        // 客户端建立连接后，与服务器端通信是用NioByteUnsafe的read()读取数据
         final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
         if (!k.isValid()) {
             final EventLoop eventLoop;
@@ -673,9 +682,12 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
 
         try {
+            // 看看SelectionKey有哪些网路事件是准备好的
             int readyOps = k.readyOps();
             // We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
             // the NIO JDK channel implementation may throw a NotYetConnectedException.
+
+            // 这一步是对于客户端连接好之后
             if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
                 // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
                 // See https://github.com/netty/netty/issues/924
@@ -694,8 +706,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
             // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
             // to a spin loop
+            // 对于服务器端，接收客户端的连接或者请求
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
-                // 读取, AbstractNioChannel#read() / AbstractNioByteChannel#read()
+                // 读取
                 unsafe.read();
             }
         } catch (CancelledKeyException ignored) {
@@ -786,8 +799,10 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     private void select(boolean oldWakenUp) throws IOException {
         Selector selector = this.selector;
         try {
+            // selectCnt的数量
             int selectCnt = 0;
             long currentTimeNanos = System.nanoTime();
+            // 定时任务截止事件快到了，中断本次轮询
             long selectDeadLineNanos = currentTimeNanos + delayNanos(currentTimeNanos);
 
             for (;;) {
@@ -804,12 +819,14 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 // Selector#wakeup. So we need to check task queue again before executing select operation.
                 // If we don't, the task might be pended until select operation was timed out.
                 // It might be pended until idle timeout if IdleStateHandler existed in pipeline.
+                // 轮询过程中发现有任务加入，中断本次轮询
                 if (hasTasks() && wakenUp.compareAndSet(false, true)) {
                     selector.selectNow();
                     selectCnt = 1;
                     break;
                 }
 
+                // 阻塞时select操作，调用wakeup方法唤醒selector阻塞
                 int selectedKeys = selector.select(timeoutMillis);
                 selectCnt ++;
 
@@ -835,6 +852,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                     break;
                 }
 
+                // 解决jdk的nio bug
                 long time = System.nanoTime();
                 if (time - TimeUnit.MILLISECONDS.toNanos(timeoutMillis) >= currentTimeNanos) {
                     // timeoutMillis elapsed without anything selected.

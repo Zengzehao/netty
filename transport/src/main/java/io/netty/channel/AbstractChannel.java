@@ -532,6 +532,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 }
                 // 第一次注册
                 boolean firstRegistration = neverRegistered;
+                //
                 doRegister();
                 neverRegistered = false;
                 // 已经注册
@@ -539,6 +540,8 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
 
                 // Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
                 // user may already fire events through the pipeline in the ChannelFutureListener.
+
+                // 这一步，会将之前addLast，但是没有添加进来的Handler，重新添加进来
                 pipeline.invokeHandlerAddedIfNeeded();
 
                 safeSetSuccess(promise);
@@ -548,6 +551,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 // Only fire a channelActive if the channel has never been registered. This prevents firing
                 // multiple channel actives if the channel is deregistered and re-registered.
 
+                // 服务器刚开始启动时不会进来
                 if (isActive()) {
                     // 如果是第一次注册
                     if (firstRegistration) {
